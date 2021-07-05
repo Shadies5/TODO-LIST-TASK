@@ -1,0 +1,89 @@
+import React, {Component} from 'react';
+import {v4 as uuid} from "uuid";
+import journalImage from './img/journals.svg'
+import {TodoInput} from './components/todo-input/todo-input.component';
+import {TodoList} from './components/todo-list/todo-list.component';
+import './App.css';
+
+
+
+class App extends Component {
+  constructor () {
+    super();
+
+    this.state = {
+      todos: [],
+      id: uuid(),
+      inputText: '',
+      editItem: false
+    }
+  }
+
+  handleChange =(e) => {
+    e.preventDefault();
+    this.setState({inputText: e.target.value});
+  }
+
+  handleSubmit =(e) => {
+    e.preventDefault();
+    const newTodo ={  //Todo: form a better name for the "createTodo variable"
+      id: this.state.id,
+      todoText: this.state.inputText
+    }
+    
+    const updatedTodo = [...this.state.todos, newTodo]
+    this.setState({
+      todos: updatedTodo,
+      inputText: '',
+      id: uuid(),
+      editItem: false
+    })
+
+  }
+
+  handleDelete = (id) => {
+    const filteredTodo = this.state.todos.filter(todo => todo.id !== id)
+    this.setState({
+      todos: filteredTodo
+    })
+  }
+
+  handleEdit = (id) => {
+    const filteredTodo = this.state.todos.filter(todo => todo.id !== id);
+    const selectedItem = this.state.todos.find(todo => todo.id === id);
+
+    this.setState({
+      todos: filteredTodo,
+      inputText: selectedItem.todoText,
+      id:id,
+      editItem: true
+    })
+
+  }
+
+
+  render () {
+    return (
+      <div className="App container">
+        <h1 className="header"><img src= {journalImage} alt = "journal" /> Todo App</h1>
+
+        <TodoInput 
+        inputText={this.state.inputText}
+        handleChange={this.handleChange}
+        handleSubmit={this.handleSubmit} 
+        editItem={this.state.editItem}
+        />
+
+        <TodoList 
+        todos={this.state.todos}
+        handleDelete={this.handleDelete}
+        handleEdit={this.handleEdit}
+        />
+      </div>
+
+      
+    )
+  }
+}
+
+export default App;
